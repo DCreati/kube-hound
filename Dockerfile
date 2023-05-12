@@ -1,15 +1,26 @@
-# immagine di base di Python
-FROM python:3.10
+FROM python:3.10-bullseye
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl
-RUN curl -sSL https://install.python-poetry.org | python3 -
+# Get curl
+RUN apt update \
+    && apt install -y curl
 
+# Bind libcurl
+RUN apt-cache search libcurl | grep python \
+    && apt install python3-pycurl \
+    && apt-cache search libcurl
+
+# Install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH=$PATH:/root/.local/bin
 
-COPY . .
-# COPY pyproject.toml poetry.lock ./
+# Install dependecies
+COPY pyproject.toml poetry.lock ./
+RUN poetry install --no-interaction --no-ansi
 
-RUN poetry install
+# Copy all source files
+COPY . .
+
+# Execute application
 ENTRYPOINT ["poetry", "run", "python", "-m", "kube_hound"]
