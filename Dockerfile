@@ -16,11 +16,14 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH=$PATH:/root/.local/bin
 
 # Install dependecies
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-interaction --no-ansi
+COPY pyproject.toml poetry.lock /app/
+
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi
 
 # Copy all source files
-COPY . .
+COPY . /app
 
 # Execute application
 ENTRYPOINT ["poetry", "run", "python", "-m", "kube_hound"]
+EXPOSE 8900
