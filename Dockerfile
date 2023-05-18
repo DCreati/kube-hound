@@ -26,4 +26,3 @@ COPY . /app
 
 # Execute application
 ENTRYPOINT ["poetry", "run", "python", "-m", "kube_hound"]
-EXPOSE 8900
