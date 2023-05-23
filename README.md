@@ -15,6 +15,21 @@ Currently it is supported the detection for:
 
 The folder `data/examples` contains various examples of analyses on different sample applications.
 
+## Dependencies
+
+Kube-hound needs this addons:
+
+ - [Docker engine](https://docs.docker.com/engine/install/)
+ - [Sysbox](https://github.com/nestybox/sysbox#installation)
+ - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+ - [Ksniff](https://github.com/eldadru/ksniff) (to detect unencrypted Pod-to-Pod traffic)
+
+To install the python dependencies run
+
+```sh
+poetry install
+```
+
 ## Usage
 
 ### Command line interface
@@ -83,17 +98,6 @@ hound.run_dynamic = False
 # run the analyses and show the results
 hound.run_analyses()
 hound.show_results()
-```
-
-## Dependencies
-
-Kube-hound needs the Docker engine and kubectl installed.
-Additionally, to detect unencrypted Pod-to-Pod traffic, it needs [ksniff](https://github.com/eldadru/ksniff) installed.
-
-To install the python dependencies run
-
-```sh
-poetry install
 ```
 
 ## Testing

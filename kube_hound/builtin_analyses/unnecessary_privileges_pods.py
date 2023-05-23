@@ -25,6 +25,13 @@ class UnnecessaryPrivilegesToPods(StaticAnalysis):
         if kubernetes_objects is None:
             return []
 
+        self.docker_client = docker.from_env()
+
+        # spawn a kubesec container
+        logger.debug('spawning kubesec container')
+        kubesec_container = self.docker_client.containers.run(
+            'kubesec/kubesec:v2', detach=True, ports={'8080/tcp': 8080})
+
         output_results = []
 
         # for each different Kubernetes config, send it to Kubesec
