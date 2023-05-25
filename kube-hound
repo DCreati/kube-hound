@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Checking if -l argument is present
+found=false
+for arg in "$@"; do
+    if [[ "$arg" == "-l" ]]; then
+        found=true
+        break
+    fi
+done
+
+
+command=''
+if $found; then
+    analyses=""
+    while getopts l: flag; do
+        case "${flag}" in
+            l) analyses=${OPTARG};;
+        esac
+    done
+
+    # Split analysis into array    
+    IFS=',' read -ra analysis_list <<< "$analyses"
+
+    # Declare array with: analysis -> image
+    declare -A analysis_service
+    analysis_service["kubesec_io"]="kubesec"
+
+    # Start docker with different configurations
+    services=""
+    for analysis_id in "${analysis_list[@]}"; do
+        if [[ -v analysis_service["$analysis_id"] ]]; then # Analysis id exists, spawn container
+            services+="${analysis_service["$analysis_id"]} " # Leave the end space to separate services
+        fi
+    done
+
+    command="ARGS=\"$@\" docker compose up app $services"
+else
+    command="ARGS=\"$@\" docker compose up"
+fi
+
+eval $command
+
+EXIT_CODE=$?
+if [ $EXIT_CODE -eq 0 ]; then
+  docker-compose down
+fi

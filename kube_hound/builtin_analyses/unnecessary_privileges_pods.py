@@ -25,13 +25,6 @@ class UnnecessaryPrivilegesToPods(StaticAnalysis):
         if kubernetes_objects is None:
             return []
 
-        self.docker_client = docker.from_env()
-
-        # spawn a kubesec container
-        logger.debug('spawning kubesec container')
-        kubesec_container = self.docker_client.containers.run(
-            'kubesec/kubesec:v2', detach=True, ports={'8080/tcp': 8080})
-
         output_results = []
 
         # for each different Kubernetes config, send it to Kubesec
@@ -58,9 +51,8 @@ class UnnecessaryPrivilegesToPods(StaticAnalysis):
         with open(obj.path, 'rb') as f:
             raw_data = f.read()
 
-        # send the content to kubesec
         response = requests.post(
-            'https://v2.kubesec.io/scan', data=raw_data)
+            f'http://kubesec:8080/scan', data=raw_data)
 
         # parse the results
         data = json.loads(response.text)

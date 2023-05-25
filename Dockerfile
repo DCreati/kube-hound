@@ -25,4 +25,4 @@ RUN poetry config virtualenvs.create false \
 COPY . /app
 
 # Execute application
-ENTRYPOINT ["poetry", "run", "python", "-m", "kube_hound"]
+# ENTRYPOINT ["poetry", "run", "python", "-m", "kube_hound"]
