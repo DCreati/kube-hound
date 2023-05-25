@@ -20,7 +20,6 @@ The folder `data/examples` contains various examples of analyses on different sa
 Kube-hound needs this addons:
 
  - [Docker engine](https://docs.docker.com/engine/install/)
- - [Sysbox](https://github.com/nestybox/sysbox#installation)
  - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
  - [Ksniff](https://github.com/eldadru/ksniff) (to detect unencrypted Pod-to-Pod traffic)
 
