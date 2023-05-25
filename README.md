@@ -34,12 +34,10 @@ poetry install
 ### Command line interface
 
 ```sh
-./kube-hound
+./kube-hound [-h] [-c CONTEXT] [-d] [-s] [-l ANALYSIS_LIST] [--json] [-v] [-vv] config_file
 ```
 
 ```text
-usage: ./kube-hound [-h] [-c CONTEXT] [-d] [-s] [-l ANALYSIS_LIST] [--json] [-v] [-vv] config_file
-
 kube-hound: detect securitysmells in kubernetes based applications
 
 positional arguments:
