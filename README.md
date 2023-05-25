@@ -35,11 +35,11 @@ poetry install
 ### Command line interface
 
 ```sh
-poetry run python -m kube_hound
+./kube-hound
 ```
 
 ```text
-usage: kube-hound [-h] [-c CONTEXT] [-d] [-s] [-l ANALYSIS_LIST] [--json] [-v] [-vv] config_file
+usage: ./kube-hound [-h] [-c CONTEXT] [-d] [-s] [-l ANALYSIS_LIST] [--json] [-v] [-vv] config_file
 
 kube-hound: detect securitysmells in kubernetes based applications
 
