@@ -1,42 +1,81 @@
 #!/bin/bash
 
-# Checking if -l argument is present
-found=false
-for arg in "$@"; do
-    if [[ "$arg" == "-l" ]]; then
-        found=true
-        break
-    fi
-done
+declare -A static_analysis
+static_analysis["kubesec_io"]="kubesec"
+
+declare -A dynamic_analysis
+dynamic_analysis["kubesec_io"]="kubesec"
 
 
-command=''
-if $found; then
-    analyses=""
-    while getopts l: flag; do
-        case "${flag}" in
-            l) analyses=${OPTARG};;
-        esac
+execDynamicAnalisys () {
+    services=""
+    for dkey in "${!dynamic_analysis[@]}"; do
+        dval="${dynamic_analysis[$dkey]}"
+        services+="${dval} "
     done
 
-    # Split analysis into array    
-    IFS=',' read -ra analysis_list <<< "$analyses"
+    echo "$services"
+}
 
-    # Declare array with: analysis -> image
-    declare -A analysis_service
-    analysis_service["kubesec_io"]="kubesec"
+execStaticAnalisys () {
+    services=""
+    for skey in "${!static_analysis[@]}"; do
+        sval="${static_analysis[$skey]}"
+        services+="${sval} "
+    done
+
+    echo $services
+}
+
+execListAnalisys () {
+    analyses=$1 
+
+    # Split analysis into array   
+    IFS=',' read -ra analysis_list <<< "$analyses"
 
     # Start docker with different configurations
     services=""
+    used_keys=()
     for analysis_id in "${analysis_list[@]}"; do
-        if [[ -v analysis_service["$analysis_id"] ]]; then # Analysis id exists, spawn container
-            services+="${analysis_service["$analysis_id"]} " # Leave the end space to separate services
+        if ! [[ "${used_keys[*]}" =~ "$analysis_id" ]]; then # Check if analysis is already take
+            service=""
+            if [[ -v static_analysis["$analysis_id"] ]]; then
+                service="${static_analysis["$analysis_id"]} "
+            elif [[ -v dynamic_analysis["$analysis_id"] ]]; then
+                service="${dynamic_analysis["$analysis_id"]} "
+            fi
+            services+="${service}"
+            used_keys+=("$analysis_id")
         fi
     done
 
-    command="ARGS=\"$@\" docker compose up app $services"
-else
-    command="ARGS=\"$@\" docker compose up"
-fi
+    echo "$services"
+}
 
-eval $command
+# Main: checking for arguments
+command_count=0
+command="ARGS=\"$@\" docker compose up app"
+while getopts sdl: opt; do
+    case "$opt" in
+        l|d|s) 
+            if [[ $command_count -eq 1 ]]; then
+                exit 1
+            fi
+            command_count=$((count + 1))
+
+            if [[ $opt == "s" ]]; then
+                services=$(execStaticAnalisys)
+            elif [[ $opt == "d" ]]; then
+                services=$(execDynamicAnalisys)
+            elif [[ $opt == "l" ]]; then
+                services=$(execListAnalisys $OPTARG)
+            fi
+            ;;
+
+        ?)
+            eval "$command"
+            ;;
+    esac
+done
+
+eval "$command $services"
