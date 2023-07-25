@@ -6,8 +6,10 @@ services:
       dockerfile: Dockerfile
     command: "poetry run python -m kube_hound ${ARGS}"
 
-  kubesec:
+  kubesec_io:
     image: kubesec/kubesec:v2
     ports:
       - 8080:8080
     command: ["http", "8080"]
+    environment:
+      - TYPE=static

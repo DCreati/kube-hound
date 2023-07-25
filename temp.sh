@@ -1,24 +1,15 @@
-declare -A array1
-array1["chiave1"]="valore1"
-array1["chiave2"]="valore2"
+#!/bin/bash
 
-declare -A array2
-array2["chiave2"]="valore2"
-array2["chiave3"]="valore3"
-array2["chiave4"]="valore4"
+file_path="docker-compose.yml"  # Sostituisci "nome_file.txt" con il percorso del tuo file
 
-declare -A array_combinato
+# Controlla se il file esiste
+if [ ! -f "$file_path" ]; then
+  echo "Il file $file_path non esiste."
+  exit 1
+fi
 
-for chiave in "${!array1[@]}"; do
-  valore="${array1[$chiave]}"
-  array_combinato["$chiave"]="$valore"
-done
-
-for chiave in "${!array2[@]}"; do
-  valore="${array2[$chiave]}"
-  array_combinato["$chiave"]="$valore"
-done
-
-for chiave in "${!array_combinato[@]}"; do
-    echo "${array_combinato["$chiave"]}"
-done
+# Leggi il file riga per riga
+while IFS= read -r line; do
+  # Fai qualcosa con la riga (ad esempio, stampala)
+  echo "linea: $line"
+done < "$file_path"
